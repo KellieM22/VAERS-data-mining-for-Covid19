@@ -55,3 +55,6 @@ VAERS2020
 #look for covid vaccines
 VAERS2020new <- VAERS2020[VAERS2020$VAX_TYPE == "COVID19", ]
 VAERS2020new
+
+#merge all three years together
+covid_data<-rbind(VAERS2022, VAERS2021, VAERS2020)
