@@ -58,3 +58,23 @@ VAERS2020new
 
 #merge all three years together
 covid_data<-rbind(VAERS2022, VAERS2021, VAERS2020)
+
+#look at age group distributions
+age_covid<- table (covid_data$AGE_YRS)
+age_covid
+barplot(age_covid, main="side effects by age",
+        xlab="age")
+ 
+#make age groups
+covid_data$AGE_GROUP<-cut(covid_data$AGE_YRS,
+                        breaks = c(17 ,25 ,30 ,35 ,40 ,45 ,50 ,55 ,60 ,65 ,70 ,75 ,80 ,85
+                                  , Inf),
+                        labels = c( "0-17 years", "18-25 years", "26-30 years"
+                                   , "31-35 years", "36-40 years", "41-45 years"
+                                   , "46-50 years", "51-55 years", "56-60 years"
+                                   ,"61-65 years", "66-70 years", "71-75 years"
+                                   , "81-85 years", "86+ years"),
+                        right = FALSE)
+
+#export Covid19 data file
+write.csv(covid_data, "/Users/Kellie/Documents/covid_data.csv")
