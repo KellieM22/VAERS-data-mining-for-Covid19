@@ -78,3 +78,236 @@ covid_data$AGE_GROUP<-cut(covid_data$AGE_YRS,
 
 #export Covid19 data file
 write.csv(covid_data, "/Users/Kellie/Documents/covid_data.csv")
+
+#Create control groups and write to csv file. 
+FLU <- covid_data[str_detect(covid_data$VAX_TYPE, "FLU"),]
+write.csv(FLU, "FLUVAERS.csv")
+SHINGLES <- covid_data[str_detect(covid_data$VAX_TYPE, "VARZOS"),]
+write.csv(SHINGLES,"SHINGLES.csv")
+
+#Attempt to run MCA with a small subset of the database, still froze during analysis.
+results <- Factoshiny(resultsfilter)
+resultsfilter <- sample_n(SHINGLES,100)
+
+#Determing deaths for vaccine gorups and men vs women. 
+pfizersympdeath <- ifelse(pfizersymp$DIED == "Y", 1,0)
+pfizersympdeath
+sum(pfizersympdeath)/nrow(pfizersymp)
+dead = subset(pfizersymp, pfizersympdeath == 1)
+alive = subset(pfizersymp, pfizersympdeath == 0)
+mean(dead$AGE_YRS, na.rm = TRUE)
+mean(alive$AGE_YRS, na.rm = TRUE)
+t.test(alive$AGE_YRS, dead$AGE_YRS, alternative = "two.sided", conf.level = 0.95)
+men = subset(pfizersymp, SEX == "M")
+mendeath <- ifelse(men$DIED == "Y", 1,0)
+mean(mendeath)
+women= subset(pfizersymp, SEX == "F")
+womendeath <- ifelse(women$DIED == "Y",1,0)
+mean(womendeath)
+pfizermenwomen <- rbind(men,women)
+t.test(mendeath, womendeath, alternative = "two.sided", conf.level = 0.95)
+
+#Determin deaths by age group for pfizer. 
+pfizersymp$AGE_GROUP<-cut(pfizersymp$AGE_YRS,
+                          breaks = c(-Inf,1,4,14,24,34,44,54,64,74,84,Inf),
+                          labels = c( "0-1 years", "1-4 years", "5-14 years", "15-24 years"
+                                      , "25-34 years", "35-44 years", "45-54 years"
+                                      , "55-64 years", "65-74 years", "75-84 years",
+                                      "85+ years"),
+                          right = FALSE)
+age = subset(pfizersymp, AGE_GROUP == "0-1 years")
+agedeath <- ifelse(age$DIED == "Y", 1, 0)
+mean(agedeath)
+ageall <- ifelse(pfizersymp$DIED =="Y", 1,0)
+mean(ageall)
+t.test(agedeath, ageall, alternative = "two.sided", conf.level = 0.95)
+sum(agedeath)
+nrow(age)
+sum(agedeath)/nrow(age)
+TAB <- table(pfizersymp$AGE_GROUP, pfizersymp$DIED)
+TAB
+
+
+#Determine death by age group janssen
+janssensymp$AGE_GROUP<-cut(janssensymp$AGE_YRS,
+                          breaks = c(-Inf,1,4,14,24,34,44,54,64,74,84,Inf),
+                          labels = c( "0-1 years", "1-4 years", "5-14 years", "15-24 years"
+                                      , "25-34 years", "35-44 years", "45-54 years"
+                                      , "55-64 years", "65-74 years", "75-84 years",
+                                      "85+ years"),
+                          right = FALSE)
+
+
+
+
+age = subset(janssensymp, AGE_GROUP == "85+ years")
+agedeath <- ifelse(age$DIED == "Y", 1, 0)
+mean(agedeath)
+ageall <- ifelse(janssensymp$DIED =="Y", 1,0)
+mean(ageall)
+t.test(agedeath, ageall, alternative = "two.sided", conf.level = 0.95)
+sum(agedeath)
+nrow(age)
+sum(agedeath)/nrow(age)
+TAB <- table(janssensymp$AGE_GROUP, janssensymp$DIED)
+TAB
+
+#Determine death by age group Janssen.
+janssensymp$AGE_GROUP<-cut(janssensymp$AGE_YRS,
+                           breaks = c(-Inf,1,4,14,24,34,44,54,64,74,84,Inf),
+                           labels = c( "0-1 years", "1-4 years", "5-14 years", "15-24 years"
+                                       , "25-34 years", "35-44 years", "45-54 years"
+                                       , "55-64 years", "65-74 years", "75-84 years",
+                                       "85+ years"),
+                           right = FALSE)
+
+
+
+
+age = subset(janssensymp, AGE_GROUP == "85+ years")
+agedeath <- ifelse(age$DIED == "Y", 1, 0)
+mean(agedeath)
+ageall <- ifelse(janssensymp$DIED =="Y", 1,0)
+mean(ageall)
+t.test(agedeath, ageall, alternative = "two.sided", conf.level = 0.95)
+sum(agedeath)
+nrow(age)
+sum(agedeath)/nrow(age)
+TAB <- table(janssensymp$AGE_GROUP, janssensymp$DIED)
+TAB
+
+#Determine death by age group Flu
+FLU$AGE_GROUP<-cut(FLU$AGE_YRS,
+                           breaks = c(-Inf,1,4,14,24,34,44,54,64,74,84,Inf),
+                           labels = c( "0-1 years", "1-4 years", "5-14 years", "15-24 years"
+                                       , "25-34 years", "35-44 years", "45-54 years"
+                                       , "55-64 years", "65-74 years", "75-84 years",
+                                       "85+ years"),
+                           right = FALSE)
+
+
+
+
+age = subset(FLU, AGE_GROUP == "85+ years")
+agedeath <- ifelse(age$DIED == "Y", 1, 0)
+mean(agedeath)
+ageall <- ifelse(FLU$DIED =="Y", 1,0)
+mean(ageall)
+t.test(agedeath, ageall, alternative = "two.sided", conf.level = 0.95)
+sum(agedeath)
+nrow(age)
+sum(agedeath)/nrow(age)
+TAB <- table(FLU$AGE_GROUP, FLU$DIED)
+TAB
+
+#Determine death by age group Shingles. 
+
+SHINGLES$AGE_GROUP<-cut(SHINGLES$AGE_YRS,
+                   breaks = c(-Inf,1,4,14,24,34,44,54,64,74,84,Inf),
+                   labels = c( "0-1 years", "1-4 years", "5-14 years", "15-24 years"
+                               , "25-34 years", "35-44 years", "45-54 years"
+                               , "55-64 years", "65-74 years", "75-84 years",
+                               "85+ years"),
+                   right = FALSE)
+
+
+
+
+age = subset(SHINGLES, AGE_GROUP == "85+ years")
+agedeath <- ifelse(age$DIED == "Y", 1, 0)
+mean(agedeath)
+ageall <- ifelse(SHINGLES$DIED =="Y", 1,0)
+mean(ageall)
+t.test(agedeath, ageall, alternative = "two.sided", conf.level = 0.95)
+sum(agedeath)
+nrow(age)
+sum(agedeath)/nrow(age)
+TAB <- table(SHINGLES$AGE_GROUP, SHINGLES$DIED)
+TAB
+
+#death by sex pfizer.
+men = subset(pfizersymp, SEX == "M")
+mendeath <- ifelse(men$DIED == "Y", 1,0)
+mean(mendeath)
+alldeath <- ifelse(pfizersymp$DIED == "Y", 1,0)
+alldeath
+women= subset(pfizersymp, SEX == "F")
+womendeath <- ifelse(women$DIED == "Y",1,0)
+mean(womendeath)
+t.test(mendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+t.test(womendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+
+#death by sex janssen
+men = subset(janssensymp, SEX == "M")
+mendeath <- ifelse(men$DIED == "Y", 1,0)
+mean(mendeath)
+alldeath <- ifelse(janssensymp$DIED == "Y", 1,0)
+alldeath
+women= subset(janssensymp, SEX == "F")
+womendeath <- ifelse(women$DIED == "Y",1,0)
+mean(womendeath)
+t.test(mendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+t.test(womendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+
+#death by sex janssen
+men = subset(janssensymp, SEX == "M")
+mendeath <- ifelse(men$DIED == "Y", 1,0)
+mean(mendeath)
+alldeath <- ifelse(janssensymp$DIED == "Y", 1,0)
+alldeath
+women= subset(janssensymp, SEX == "F")
+womendeath <- ifelse(women$DIED == "Y",1,0)
+mean(womendeath)
+t.test(mendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+t.test(womendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+
+#death by sex flu
+men = subset(FLU, SEX == "M")
+mendeath <- ifelse(men$DIED == "Y", 1,0)
+mean(mendeath)
+alldeath <- ifelse(FLU$DIED == "Y", 1,0)
+alldeath
+women= subset(FLU, SEX == "F")
+womendeath <- ifelse(women$DIED == "Y",1,0)
+mean(womendeath)
+t.test(mendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+t.test(womendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+
+#death by sex shingles
+men = subset(SHINGLES, SEX == "M")
+mendeath <- ifelse(men$DIED == "Y", 1,0)
+mean(mendeath)
+alldeath <- ifelse(SHINGLES$DIED == "Y", 1,0)
+alldeath
+women= subset(SHINGLES, SEX == "F")
+womendeath <- ifelse(women$DIED == "Y",1,0)
+mean(womendeath)
+t.test(mendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+t.test(womendeath, alldeath, alternative = "two.sided", conf.level = 0.95)
+TAB <- table(SHINGLES$AGE_GROUP, SHINGLES$DIED)
+
+#Count allergies check results.
+count(pfizersymp$VAX_LOT)
+allergies = subset(pfizersymp, ALLERGIES == "latex")
+allergies
+totalallergies <- pfizersymp[!(pfizersymp$ALLERGIES == "None")| (pfizersymp$ALLERGIES == " ")|(pfizersymp$ALLERGIES == "NA"),]
+totalallergies
+
+
+#Count allergies check results. 
+count(pfizersymp$VAX_LOT)
+allergies = subset(pfizersymp, ALLERGIES == "penicillin")
+allergies
+totalallergies <- pfizersymp[!(pfizersymp$ALLERGIES == "None")| (pfizersymp$ALLERGIES == " ")|(pfizersymp$ALLERGIES == "NA"),]
+totalallergies
+
+# used to get citations for each citation used. 
+citation("Factoshiny")
+citation("readxl")
+citation("stringr")
+citation("gtsummary")
+citation("ggplot2")
+citation("FactoMineR")
+citation("Factoshiny")
+citation("Hmisc")
+citation("epiR")
